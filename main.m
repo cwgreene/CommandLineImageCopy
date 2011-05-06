@@ -10,6 +10,7 @@
 #include "main.h"
 
 #import <Foundation/foundation.h>
+#import <Foundation/NSFileManager.h>
 #import <Appkit/NSImage.h>
 
 int main( int argc, const char* argv[])
@@ -20,11 +21,20 @@ int main( int argc, const char* argv[])
 	if(argc < 2)
 	{
 		printf("Please specify image path\n");
-		exit(0);
+		exit(-1);
 	}
 	filename = [NSString stringWithCString:argv[1]];
+	if([[NSFileManager defaultManager] fileExistsAtPath:filename] != TRUE)
+	{
+		printf("Invalid file location\n");
+		exit(-2);
+	}
 	NSImage *controlImage = [[NSImage alloc] initWithContentsOfFile:filename];
-	printf("Success\n");
+	if(controlImage == nil)
+	{
+		printf("Invalid file format\n");
+		exit(-2);
+	}
 	
 	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
 	NSInteger changecount = [pasteboard clearContents];
